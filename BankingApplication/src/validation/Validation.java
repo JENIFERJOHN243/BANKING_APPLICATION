@@ -9,7 +9,7 @@ public class Validation {
 		
 		Pattern pattern; 
 		Matcher matcher;
-		pattern = Pattern.compile("^[a-zA-Z]{4,15}$");
+		pattern = Pattern.compile("^[a-zA-Z]{4,30}$");
 		matcher = pattern.matcher(userName);
 		return matcher.matches();
 	}
