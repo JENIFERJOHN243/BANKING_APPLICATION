@@ -1,0 +1,25 @@
+  ***BANKING APPLICATIONS***
+
+Controller 
+1) BankingApplication (Main Class)
+2) BankingController
+  * createAccount() --> for New Customer
+  * loginAccount() -->Admin & Customer
+      - checkBalance()
+      - withdraw()
+      - deposit()
+      - miniStatement()
+
+Model 
+1) CustomerDetails (Class)
+   * name
+   * phone_No
+   * InitialDeposit
+   * balance
+   * lastWithdrawal
+   * lastDeposit
+
+Validation 
+1) Validation - ClassName
+   * userNameValidation()
+   * mobileNumberValidation()
