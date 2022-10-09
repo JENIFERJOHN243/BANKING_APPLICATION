@@ -1,9 +1,11 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+import dao.BankingApplicationDAO;
 import model.CustomerDetails;
 import validation.Validation;
 
@@ -11,11 +13,9 @@ public class BankingController {
 	Validation valid = new Validation();
 	Scanner scanner = new Scanner(System.in);
 	Random random=new Random();
-	ArrayList<CustomerDetails> accountList= new ArrayList<>();
-	int unqiueID=1;
 	
-	public void startProcess() {
-		System.out.printf("%30s","Welcome To JJ Bank");
+	public void startProcess() throws ClassNotFoundException, SQLException {
+		System.out.printf("%30s","Welcome To BB Bank");
 		System.out.println();
 		System.out.println("1 : Create Account \n2 : Login Account \n3 : Exit");
 		System.out.println();
@@ -43,7 +43,7 @@ public class BankingController {
 		}
 	}
 
-	private void createAccount() {
+	private void createAccount() throws ClassNotFoundException, SQLException {
 		CustomerDetails details = new CustomerDetails();
 		boolean boolValue=false;
 		boolean boolValue1=false;
@@ -90,161 +90,164 @@ public class BankingController {
 			accountNumber+=Integer.toString(num);
 		}
 		details.setAccountNumber(accountNumber);
-		details.setCustomerId(unqiueID);
-		unqiueID++;
-		accountList.add(details);
+		BankingApplicationDAO.addCustomerDetails(details);
+		details.setCustomerId(BankingApplicationDAO.fetchTheCustomerId(details));
+		ArrayList<CustomerDetails> accountList = BankingApplicationDAO.getCustomerDetails(details);
 		System.out.println("Successfully Your Account is Created");
 		System.out.println();
-		System.out.println("Your Account Name : "+details.getCustomerName());
-		System.out.println("Your Account Number : "+details.getAccountNumber());
-		System.out.println("Your Customer ID :"+details.getCustomerId());
-		System.out.println("Your Current Balance :"+details.getBalance());
+		for(int index=0;index<accountList.size();index++) {
+		System.out.println("Your Account Name : "+accountList.get(index).getCustomerName());
+		System.out.println("Your Account Number : "+accountList.get(index).getAccountNumber());
+		System.out.println("Your Customer ID :"+accountList.get(index).getCustomerId());
+		System.out.println("Your Current Balance :"+accountList.get(index).getBalance());
 		System.out.println();
 		startProcess();
 	}
+}
 
-
-	public void loginAccount() {
+	public void loginAccount() throws ClassNotFoundException, SQLException {
+		CustomerDetails details = new CustomerDetails();
 		boolean boolValue = true;
 		System.out.println("Enter Your Account Name : ");
 		String userName = scanner.next();
+		details.setCustomerName(userName);
 		System.out.println("Enter Your Customer ID :");
-		int userID=scanner.nextInt();
-		if(userName.equalsIgnoreCase("Admin") && userID==2412) {
+		Integer customer_id = scanner.nextInt();
+		details.setCustomerId(customer_id);
+		Integer userId = BankingApplicationDAO.fetchCustomerId(details);
+		if(userName.equalsIgnoreCase("Admin") && customer_id==2412) {
 			adminLogin();
 		}
-		else if(checkAccount(userName,userID)) {
-		System.out.println();
-		while(boolValue) {
-		System.out.println("1 : Check Your Balance");
-		System.out.println("2 : Deposit");
-		System.out.println("3 : Withdraw");
-		System.out.println("4 : Mini Statement");
-		System.out.println("5 : Back To Main Menu");
-		System.out.println();
-			System.out.println("Enter Your Choice");
-			int option=scanner.nextInt();
-			
-			switch (option){
-			case 1:{
-				checkBalance(userID);
-				break;
-			}
-			case 2:{
-				deposit(userID);
-				break;
-			}
-			case 3:{
-				withdraw(userID);
-				break;
-			}
-			case 4:{
-				getMiniStatement(userID);
-				break;
-			}
-			case 5:{
-				boolValue=false;
-				startProcess();
-				break;
-			}
-			default:{
-				System.out.println("Invalid Option!!Please Enter Correct Option");
-				System.out.println();
+		else if(userId!=null) {
+			System.out.println();
+			while(boolValue) {
+			System.out.println("1 : Check Your Balance");
+			System.out.println("2 : Deposit");
+			System.out.println("3 : Withdraw");
+			System.out.println("4 : Mini Statement");
+			System.out.println("5 : Back To Main Menu");
+			System.out.println();
+				System.out.println("Enter Your Choice");
+				int option=scanner.nextInt();
+				
+				switch (option){
+				case 1:{
+					checkBalance(details);
+					break;
+				}
+				case 2:{
+					deposit(details);
+					break;
+				}
+				case 3:{
+					withdraw(details);
+					break;
+				}
+				case 4:{
+					getMiniStatement(details);
+					break;
+				}
+				case 5:{
+					boolValue=false;
+					startProcess();
+					break;
+				}
+				default:{
+					System.out.println("Invalid Option!!Please Enter Correct Option");
+					System.out.println();
+					}
 				}
 			}
-		}
 		}else {
-			System.out.println("No Account Found");
-			}
+			System.out.println("No Account Found..!! Try Again");
+			loginAccount();
+			
+		}
 	}
 
-	private void adminLogin() {
+	private void adminLogin() throws ClassNotFoundException, SQLException {
+		ArrayList<CustomerDetails> accountList = BankingApplicationDAO.getAdmin();
+		System.out.println("+---------------------------------------------------------------------------------+");
+		System.out.printf("| %15s | %15s | %20s | %20s |","Customer ID","Customer Name","Account No","Net Balance");
+		System.out.println();
+		System.out.println("+---------------------------------------------------------------------------------+");
 		for(int index=0;index<accountList.size();index++) {
-		System.out.println();
-		System.out.println("Customer Name         : "+accountList.get(index).getCustomerName());
-		System.out.println("Customer ID           : "+accountList.get(index).getCustomerId());
-		System.out.println("Customer Phone Number : "+accountList.get(index).getPhoneNumber());
-		System.out.println("Account Number        : "+accountList.get(index).getAccountNumber());
-		System.out.println("Net Balance           : "+accountList.get(index).getBalance());
-		System.out.println();
+			System.out.printf("| %15s | %15s | %20s | %20s |",accountList.get(index).getCustomerId(),accountList.get(index).getCustomerName(),
+					accountList.get(index).getAccountNumber(),accountList.get(index).getBalance());
+			System.out.println();
+			System.out.println("+---------------------------------------------------------------------------------+");
 		}
 		System.out.println();
 		startProcess();
    }
 
-	private void getMiniStatement(int userID) {
+	private void getMiniStatement(CustomerDetails details) throws ClassNotFoundException, SQLException {
+		ArrayList<CustomerDetails> accountList = BankingApplicationDAO.getMiniStatement(details.getCustomerId());
 		for(int index=0;index<accountList.size();index++) {
-			if(accountList.get(index).getCustomerId()==userID) {
+
 			System.out.println();
 			System.out.println("Last WithDrawal Amount :"+accountList.get(index).getWithdrawAmount());
 			System.out.println("Last Deposit Amount :"+accountList.get(index).getDepositAmount());
 			System.out.println("Your Net Balance :"+accountList.get(index).getBalance());
 			System.out.println();
 		}
-			}
 		System.out.println();
 	}
 
-	private void withdraw(int userID) {
+	private void withdraw(CustomerDetails details) throws ClassNotFoundException, SQLException {
 		System.out.println("Enter An Amount To Withdraw ");
-		double amount2 = scanner.nextInt();
-		for(int index=0;index<accountList.size();index++) {
-			if(accountList.get(index).getCustomerId()==userID) {
-				if(accountList.get(index).getBalance()>amount2) {
-					accountList.get(index).setWithdrawAmount(amount2);
-					accountList.get(index).setBalance(accountList.get(index).getBalance() - amount2);
-					System.out.println("Withdrawl Amount: "+amount2);
-					System.out.println("Your Net Balance after Withdraw: "+accountList.get(index).getBalance());
-					System.out.println();
-				}else {
-					System.out.println("Insufficient Balance");
-					System.out.println();
+		double withdrawAmount = scanner.nextInt();
+		double netBalance = BankingApplicationDAO.fetchCustomerBalance(details.getCustomerId());
+		if(netBalance > withdrawAmount) {
+			details.setWithdrawAmount(withdrawAmount);
+			details.setBalance(netBalance-withdrawAmount);
+			BankingApplicationDAO.addWithdrawDetails(details);
+			ArrayList<CustomerDetails> accountList = BankingApplicationDAO.getWithdraw(details);
+			for(int index=0;index<accountList.size();index++) {
+				System.out.println("Withdrawal Amount: "+accountList.get(index).getWithdrawAmount());
+				System.out.println("Your Net Balance After Withdraw: "+accountList.get(index).getBalance());
+				System.out.println();
 				}
-			}
+		}
+		else {
+			System.out.println("Insufficient Balance");
+			System.out.println();
 		}
 		System.out.println();
 	}
+		
 
-	private void deposit(int userID) {
+	private void deposit(CustomerDetails details) throws ClassNotFoundException, SQLException {
 		System.out.println("Enter an amount to deposit ");
-		double amount = scanner.nextInt();
-		for(int index=0;index<accountList.size();index++) {
-			if(accountList.get(index).getCustomerId()==userID) {
-			if(amount > 0) {
-				accountList.get(index).setDepositAmount(amount);
-				accountList.get(index).setBalance(accountList.get(index).getBalance()+ amount);
-				System.out.println("Deposited Amount: "+amount);
+		double depositAmount = scanner.nextInt();
+			if(depositAmount > 0) {
+				double netBalance = BankingApplicationDAO.fetchCustomerBalance(details.getCustomerId());
+				details.setDepositAmount(depositAmount);
+				details.setBalance(netBalance+depositAmount);
+				BankingApplicationDAO.addDepositDetails(details);
+			  	ArrayList<CustomerDetails> accountList = BankingApplicationDAO.getDeposit(details);
+				for(int index=0;index<accountList.size();index++) {
+				System.out.println("Deposited Amount: "+accountList.get(index).getDepositAmount());
 				System.out.println("Your Net Balance after deposit: "+accountList.get(index).getBalance());
 				System.out.println();
+				}
 			}else {
-				System.out.println("Enter a Valid Amount");
+				System.out.println("Enter an Valid Amount");
 				System.out.println();
 			}
+			System.out.println();
 		}
-			}
-		System.out.println();
-	}
+	
 
-	private void checkBalance(int userID) {
+	private void checkBalance(CustomerDetails details) throws ClassNotFoundException, SQLException {
+		ArrayList<CustomerDetails> accountList = BankingApplicationDAO.getBalance(details.getCustomerId());
 		for(int index=0;index<accountList.size();index++) {
-			if(accountList.get(index).getCustomerId()==userID) {
 			System.out.println();
 			System.out.println("Welcome "+accountList.get(index).getCustomerName());
 			System.out.println("Your Account Number : "+accountList.get(index).getAccountNumber());
 			System.out.println("Your Net Balance = "+accountList.get(index).getBalance());
-			}
 		}
 		System.out.println();
-	}
-
-	private boolean checkAccount(String userName, int userID) {
-		for(int index=0;index<accountList.size();index++) {
-			if((accountList.get(index).getCustomerName()).equals(userName)&&
-					(accountList.get(index).getCustomerId())==userID) {
-					return true;
-			}
-		}
-		return false;
 	}
 	
 	private boolean checkInitailDepoistAmount(double initialDepositAmount) {
