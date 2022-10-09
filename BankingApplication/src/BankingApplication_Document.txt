@@ -3,8 +3,9 @@
 Controller 
 1) BankingApplication (Main Class)
 2) BankingController
-  * createAccount() --> for New Customer
-  * loginAccount() -->Admin & Customer
+  * startProcess()
+   createAccount() --> for New Customer
+   loginAccount() -->Admin & Customer
       - checkBalance()
       - withdraw()
       - deposit()
@@ -12,14 +13,30 @@ Controller
 
 Model 
 1) CustomerDetails (Class)
-   * name
-   * phone_No
-   * InitialDeposit
+   * customerName
+   * customerId
+   * phoneNumber
+   * InitialDepositAmount
+   * accountNumber
    * balance
    * lastWithdrawal
    * lastDeposit
 
 Validation 
 1) Validation - ClassName
-   * userNameValidation()
+   * nameValidation()
    * mobileNumberValidation()
+
+DAO
+1) BankingApplicationDAO
+  * addCustomerDetails()
+  * fetchCustomerId()
+  * getCustomerDetails()
+  * fetchCustomerBalance()
+  * getBalance()
+  * getDeposit()
+  * getWithdraw()
+  * addDepositDetails()
+  * addWithdrawDetails()
+  * getMiniStatement()
+  * getAdmin()
