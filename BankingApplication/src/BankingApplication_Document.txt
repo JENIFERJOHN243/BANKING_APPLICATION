@@ -40,3 +40,13 @@ DAO
   * addWithdrawDetails()
   * getMiniStatement()
   * getAdmin()
+
+MySQL-Database
+1) Customer_Details
+  * customer_id - primary key
+  * user_name
+  * initial_deposit
+  * balance
+  * acc_no
+  * deposit
+  * withdraw
