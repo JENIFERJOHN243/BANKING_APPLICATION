@@ -5,9 +5,8 @@ public class CustomerDetails {
 	private String phoneNumber;
 	private double balance;
 	private String accountNumber;
-	private String passCode;
 	private double initialDepositAmount;
-	private int customerId;
+	private Integer customerId;
 	private double depositAmount;
 	private double withdrawAmount;
 	
@@ -36,22 +35,16 @@ public class CustomerDetails {
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
-	public String getPassCode() {
-		return passCode;
-	}
-	public void setPassCode(String passCode) {
-		this.passCode = passCode;
-	}
 	public double getInitialDepositAmount() {
 		return initialDepositAmount;
 	}
 	public void setInitialDepositAmount(double initialDepositAmount) {
 		this.initialDepositAmount = initialDepositAmount;
 	}
-	public int getCustomerId() {
+	public Integer getCustomerId() {
 		return customerId;
 	}
-	public void setCustomerId(int customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 	public double getDepositAmount() {
